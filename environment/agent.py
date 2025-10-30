@@ -37,6 +37,9 @@ from IPython.display import Video
 
 from stable_baselines3.common.monitor import Monitor
 
+import csv
+import pandas as pd
+
 
 # ## Agents
 
@@ -225,6 +228,23 @@ class RewardManager():
                     continue
                 # compute term's value
                 value = term_cfg.func(env, **term_cfg.params) * term_cfg.weight
+
+                # # ---------debug only: by preston ---------
+                # write_header = not os.path.isfile('reward_debug.csv')
+                # with open('reward_debug.csv', mode='a', newline='') as file:
+
+                #     if write_header:
+                #         writer = csv.writer(file)
+                #         writer.writerow(
+                #         ['reward_name', 'reward_value', 'player_pos_x', 'player_pos_y', 'opponent_pos_x', 'opponent_pos_y', 'player_life', 'opponent_life']
+                #         )
+
+                    # player: Player = env.objects['player']
+                    # opponent: Player = env.objects['opponent']
+                    # writer = csv.writer(file)
+                    # if value != 0.0:
+                    #     writer.writerow([name, round(value, 4), player.body.position.x, player.body.position.y, opponent.body.position.x, opponent.body.position.y, player.stocks, opponent.stocks])
+            
                 # update total reward
                 reward_buffer += value
 
@@ -354,6 +374,12 @@ class SaveHandler():
         if self.max_saved != -1 and len(self.history) > self.max_saved:
             os.remove(self.history.pop(0))
 
+    # define by Preston Cai: save plots for every saved model
+    def save_plots(self) -> None:
+        log_dir = f"{self._experiment_path()}/"
+        plot_results(log_dir, title=f"Learning Curve{self.num_timesteps}_steps")
+
+
     def process(self) -> bool:
         self.num_timesteps += 1
 
@@ -361,6 +387,10 @@ class SaveHandler():
             # Save agent
             self.steps_until_save = self.save_freq
             self.save_agent()
+
+            # added by Preston Cai: save plots for every saved model
+            self.save_plots()
+
             return True
         self.steps_until_save -= 1
 
@@ -983,7 +1013,7 @@ def plot_results(log_folder, title="Learning Curve"):
 
     weights = np.repeat(1.0, 50) / 50
     print(weights, y)
-    y = np.convolve(y, weights, "valid")
+    # y = np.convolve(y, weights, "valid")
     # Truncate x
     x = x[len(x) - len(y) :]
 

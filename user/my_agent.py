@@ -27,7 +27,7 @@ class SubmittedAgent(Agent):
     '''
     def __init__(
         self,
-        file_path: Optional[str] = None,
+        file_path: Optional[str] = "checkpoints/experiment_default_custom_agent/rl_model_1660500_steps.zip",
     ):
         super().__init__(file_path)
 
