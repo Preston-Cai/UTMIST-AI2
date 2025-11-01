@@ -3,7 +3,7 @@
 from environment.environment import RenderMode
 from environment.agent import SB3Agent, CameraResolution, RecurrentPPOAgent, BasedAgent, UserInputAgent, ConstantAgent, run_match, run_real_time_match
 from user.train_agent import gen_reward_manager
-from user.my_agent import SubmittedAgent # ConstantAgent
+from user.my_agent import SubmittedAgent, SubmittedRLAgent # ConstantAgent
 
 reward_manager = gen_reward_manager()
 
@@ -12,6 +12,7 @@ model_name_1 = "rl_model00_steps" #input('Name of first model (e.g. rl_model_100
 
 my_agent = UserInputAgent()
 opponent = SubmittedAgent(None)
+# opponent = SubmittedRLAgent(None)
 # opponent = BasedAgent()
 # opponent = ConstantAgent()
 # my_agent = UserInputAgent()
