@@ -543,7 +543,7 @@ class SelfPlayWarehouseBrawl(gymnasium.Env):
                 # Give SelfPlayHandler references
                 selfplay_handler: SelfPlayHandler = value[1]
                 selfplay_handler.save_handler = self.save_handler
-                selfplay_handler.env = self       
+                selfplay_handler.env = self
 
         self.raw_env = WarehouseBrawl(resolution=resolution, train_mode=True)
         self.action_space = self.raw_env.action_space
@@ -569,6 +569,7 @@ class SelfPlayWarehouseBrawl(gymnasium.Env):
         }
 
         observations, rewards, terminated, truncated, info = self.raw_env.step(full_action)
+        self.opponent_obs = observations[1]
 
         if self.save_handler is not None:
             self.save_handler.process()
@@ -605,7 +606,7 @@ class SelfPlayWarehouseBrawl(gymnasium.Env):
 
     def close(self):
         pass
-
+    
 
 # ## Run Match
 
@@ -1013,7 +1014,7 @@ def plot_results(log_folder, title="Learning Curve"):
 
     weights = np.repeat(1.0, 50) / 50
     print(weights, y)
-    # y = np.convolve(y, weights, "valid")
+    y = np.convolve(y, weights, "valid")
     # Truncate x
     x = x[len(x) - len(y) :]
 

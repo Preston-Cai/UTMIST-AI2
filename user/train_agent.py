@@ -564,6 +564,16 @@ def debug_reward(env: WarehouseBrawl) -> float:
     
     else:
         return -1.0
+    
+def debug_2_reward(env: WarehouseBrawl) -> float:
+    player: Player = env.objects["player"]
+    v_x = player.body.velocity.x
+
+    print(v_x)
+    if v_x > 0:
+        print('v_x is positive:', v_x)
+        return v_x
+    return 0.0
 
 '''
 Add your dictionary of RewardFunctions here using RewTerms
@@ -571,120 +581,31 @@ Add your dictionary of RewardFunctions here using RewTerms
 def gen_reward_manager():
     reward_functions = {
         # 'target_height_reward': RewTerm(func=base_height_l2, weight=0.05, params={'target_height': -4, 'obj_name': 'player'}),
-        'danger_zone_reward': RewTerm(func=danger_zone_reward, weight=1.0),
-        'damage_interaction_reward': RewTerm(func=damage_interaction_reward, weight=1.0),
-        'head_to_middle_reward': RewTerm(func=head_to_middle_reward, weight=0.02),
-        'head_to_opponent': RewTerm(func=head_to_opponent, weight=1.0),
-        'penalize_attack_reward': RewTerm(func=in_state_reward, weight=-0.04, params={'desired_state': AttackState}),
-        'reward_backdash': RewTerm(func=in_state_reward, weight=0.03, params={'desired_state': BackDashState}),
-        'holding_more_than_3_keys': RewTerm(func=holding_more_than_3_keys, weight=-0.01),
-        'taunt_reward': RewTerm(func=in_state_reward, weight=0.02, params={'desired_state': TauntState}),
-        'move_to_opponent_reward': RewTerm(func=move_to_opponent_reward, weight=1.0),
-        'stock_advantage_reward': RewTerm(func=stock_advantage_reward, weight=0.3),
-        'landed_platform_award': RewTerm(func=landed_platform_award, weight=0.3),
-        'fall_out_reward_penalty': RewTerm(func=fall_out_reward_penalty, weight=0.5),
-        'too_high_penalty': RewTerm(func=too_high_penalty, weight=0.5),
-        'edge_penalty': RewTerm(func=edge_penalty, weight=0.5),
+        # 'danger_zone_reward': RewTerm(func=danger_zone_reward, weight=1.0),
+        # 'damage_interaction_reward': RewTerm(func=damage_interaction_reward, weight=1.0),
+        # 'head_to_middle_reward': RewTerm(func=head_to_middle_reward, weight=0.02),
+        # 'head_to_opponent': RewTerm(func=head_to_opponent, weight=1.0),
+        # 'penalize_attack_reward': RewTerm(func=in_state_reward, weight=-0.04, params={'desired_state': AttackState}),
+        # 'reward_backdash': RewTerm(func=in_state_reward, weight=0.03, params={'desired_state': BackDashState}),
+        # 'holding_more_than_3_keys': RewTerm(func=holding_more_than_3_keys, weight=-0.01),
+        # 'taunt_reward': RewTerm(func=in_state_reward, weight=0.02, params={'desired_state': TauntState}),
+        # 'move_to_opponent_reward': RewTerm(func=move_to_opponent_reward, weight=1.0),
+        # 'stock_advantage_reward': RewTerm(func=stock_advantage_reward, weight=0.3),
+        # 'landed_platform_award': RewTerm(func=landed_platform_award, weight=0.3),
+        # 'fall_out_reward_penalty': RewTerm(func=fall_out_reward_penalty, weight=0.5),
+        # 'too_high_penalty': RewTerm(func=too_high_penalty, weight=0.5),
+        # 'edge_penalty': RewTerm(func=edge_penalty, weight=0.5),
         # 'debug_reward': RewTerm(func=debug_reward, weight=1.0),
+        'debug_2_reward': RewTerm(func=debug_2_reward, weight=1.0),
     }
     signal_subscriptions = {
-        'on_win_reward': ('win_signal', RewTerm(func=on_win_reward, weight=50)),
-        'on_knockout_reward': ('knockout_signal', RewTerm(func=on_knockout_reward, weight=8)),
-        'on_combo_reward': ('hit_during_stun', RewTerm(func=on_combo_reward, weight=5)),
-        'on_equip_reward': ('weapon_equip_signal', RewTerm(func=on_equip_reward, weight=10)),
-        'on_drop_reward': ('weapon_drop_signal', RewTerm(func=on_drop_reward, weight=15))
+        # 'on_win_reward': ('win_signal', RewTerm(func=on_win_reward, weight=50)),
+        # 'on_knockout_reward': ('knockout_signal', RewTerm(func=on_knockout_reward, weight=8)),
+        # 'on_combo_reward': ('hit_during_stun', RewTerm(func=on_combo_reward, weight=5)),
+        # 'on_equip_reward': ('weapon_equip_signal', RewTerm(func=on_equip_reward, weight=10)),
+        # 'on_drop_reward': ('weapon_drop_signal', RewTerm(func=on_drop_reward, weight=15))
     }
     return RewardManager(reward_functions, signal_subscriptions)
-
-
-################################################################################
-# By chatGPT
-#################################################################################
-# from enum import Enum
-# import numpy as np
-# from typing import Type
-
-# # --- Reward modes ---
-# class RewardMode(Enum):
-#     ASYMMETRIC_OFFENSIVE = 0
-#     SYMMETRIC = 1
-#     ASYMMETRIC_DEFENSIVE = 2
-
-# # --- Reward functions ---
-
-# def basic_damage_reward(env, mode=RewardMode.SYMMETRIC):
-#     player = env.objects["player"]
-#     opponent = env.objects["opponent"]
-
-#     dmg_taken = player.damage_taken_this_frame
-#     dmg_dealt = opponent.damage_taken_this_frame
-
-#     if mode == RewardMode.ASYMMETRIC_OFFENSIVE:
-#         reward = dmg_dealt
-#     elif mode == RewardMode.SYMMETRIC:
-#         reward = dmg_dealt - dmg_taken
-#     elif mode == RewardMode.ASYMMETRIC_DEFENSIVE:
-#         reward = -dmg_taken
-#     else:
-#         reward = 0.0
-#     return reward / 140
-
-# def penalty_height(env, max_y=4.0):
-#     player = env.objects["player"]
-#     return -2.0 if player.body.position.y >= max_y else 0.0
-
-# def reward_backdash_state(env, desired_state):
-#     player = env.objects["player"]
-#     return 1.0 * env.dt if isinstance(player.state, desired_state) else 0.0
-
-# def reward_move_towards_opponent(env):
-#     player = env.objects["player"]
-#     opponent = env.objects["opponent"]
-
-#     if not hasattr(player, 'prev_position'):
-#         player.prev_position = player.body.position
-
-#     delta = np.array([player.body.position.x - player.prev_position.x,
-#                       player.body.position.y - player.prev_position.y])
-#     player.prev_position = player.body.position
-
-#     direction = np.array([opponent.body.position.x - player.body.position.x,
-#                           opponent.body.position.y - player.body.position.y])
-#     norm = np.linalg.norm(direction)
-#     if norm < 1e-6:
-#         return 0.0
-
-#     reward = np.dot(delta, direction / norm)
-#     return reward
-
-# # --- Signal-based rewards ---
-
-# def reward_on_win(env, agent):
-#     return 1.0 if agent == "player" else -1.0
-
-# def reward_on_lose(env, agent):
-#     return -1.0 if agent == "player" else 1.0
-
-# def reward_on_hit(env, agent):
-#     return 1.0 if agent == "opponent" else -1.0
-
-# # --- Generate the manager ---
-
-# def gen_reward_manager():
-#     reward_functions = {
-#         'damage': RewTerm(func=basic_damage_reward, weight=1.0, params={'mode': RewardMode.SYMMETRIC}),
-#         'danger_zone': RewTerm(func=penalty_height, weight=1.0, params={'max_y': 4.2}),
-#         'backdash': RewTerm(func=reward_backdash_state, weight=0.03, params={'desired_state': BackDashState}),
-#         'move_to_opponent': RewTerm(func=reward_move_towards_opponent, weight=1.0),
-#     }
-
-#     signal_subscriptions = {
-#         'win_signal': ('win_signal', RewTerm(func=reward_on_win, weight=50)),
-#         'knockout_signal': ('knockout_signal', RewTerm(func=reward_on_lose, weight=8)),
-#         'hit_signal': ('hit_during_stun', RewTerm(func=reward_on_hit, weight=5)),
-#     }
-
-#     return RewardManager(reward_functions, signal_subscriptions)
 
 # -------------------------------------------------------------------------
 # ----------------------------- MAIN FUNCTION -----------------------------
@@ -699,7 +620,7 @@ if __name__ == '__main__':
     # my_agent = SB3Agent(sb3_class=PPO)
 
     # Start here if you want to train from a specific timestep. e.g:
-    my_agent = SB3Agent(file_path='checkpoints/experiment_sb3_overnight_2/rl_model_61440_steps.zip')
+    my_agent = SB3Agent(file_path=None)
     # Reward manager
     reward_manager = gen_reward_manager()
     # Self-play settings
@@ -714,15 +635,15 @@ if __name__ == '__main__':
         save_freq=1_000_00, # Save frequency
         max_saved=40, # Maximum number of saved models
         save_path='checkpoints', # Save path
-        run_name='experiment_sb3_overnight_2', # Run name
-        mode=SaveHandlerMode.RESUME # Save mode, FORCE or RESUME
+        run_name='experiment_sb3_debug_2a', # Run name
+        mode=SaveHandlerMode.FORCE # Save mode, FORCE or RESUME
     )
 
     # Set opponent settings here:
     opponent_specification = {
-                    'self_play': (3.5, selfplay_handler),
-                    'constant_agent': (3, partial(ConstantAgent)),
-                    'based_agent': (3.5, partial(BasedAgent)),
+                    'self_play': (0.0, selfplay_handler),
+                    'constant_agent': (5.0, partial(ConstantAgent)),
+                    'based_agent': (5.0, partial(BasedAgent)),
                 }
     opponent_cfg = OpponentsCfg(opponents=opponent_specification)
 

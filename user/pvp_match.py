@@ -11,12 +11,12 @@ experiment_dir_1 = "experiment_6/" #input('Model experiment directory name (e.g.
 model_name_1 = "rl_model00_steps" #input('Name of first model (e.g. rl_model_100_steps): ')
 
 my_agent = UserInputAgent()
-opponent = SubmittedAgent(None)
-# opponent = SubmittedRLAgent(None)
+# opponent = SubmittedAgent(None)
+opponent = SubmittedRLAgent('checkpoints/experiment_sb3_overnight/rl_model_1905944_steps.zip')
+
 # opponent = BasedAgent()
 # opponent = ConstantAgent()
-# my_agent = UserInputAgent()
-# opponent = ConstantAgent()
+
 
 num_matches = 2 #int(input('Number of matches: '))
 #opponent=BasedAgent()

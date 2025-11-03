@@ -72,24 +72,27 @@ class SubmittedRLAgent(Agent):
     '''
     def __init__(
         self,
-        file_path: Optional[str] = 'checkpoints/experiment_sb3_overnight/rl_model_22960943_steps.zip'):
+        # relatively the most successful model so far (still performing poorly)
+        file_path: Optional[str] = 'checkpoints/experiment_sb3_overnight/rl_model_1905944_steps.zip',
+    ):
         super().__init__(file_path)
+        self._initialize()
 
     def _initialize(self) -> None:
-        if self.file_path is None:
-            self.model = PPO("MlpPolicy", self.env, verbose=0)
-            del self.env
-        else:
+        # if self.file_path is None:
+        #     self.model = PPO("MlpPolicy", self.env, verbose=0)
+        #     del self.env
+        # else:
             self.model = PPO.load(self.file_path)
 
-    def _gdown(self) -> str:
-        data_path = "rl-model.zip"
-        if not os.path.isfile(data_path):
-            print(f"Downloading {data_path}...")
-            # Place a link to your PUBLIC model data here. This is where we will download it from on the tournament server.
-            url = "https://drive.google.com/file/d/1JIokiBOrOClh8piclbMlpEEs6mj3H1HJ/view?usp=sharing"
-            gdown.download(url, output=data_path, fuzzy=True)
-        return data_path
+    # def _gdown(self) -> str:
+    #     data_path = "rl-model.zip"
+    #     if not os.path.isfile(data_path):
+    #         print(f"Downloading {data_path}...")
+    #         # Place a link to your PUBLIC model data here. This is where we will download it from on the tournament server.
+    #         url = "https://drive.google.com/file/d/1JIokiBOrOClh8piclbMlpEEs6mj3H1HJ/view?usp=sharing"
+    #         gdown.download(url, output=data_path, fuzzy=True)
+    #     return data_path
 
     def predict(self, obs):
         action, _ = self.model.predict(obs)
